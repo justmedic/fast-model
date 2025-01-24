@@ -94,11 +94,11 @@ asyncio.run(create_channel())
 
 ##### Get an Instance
 
-Retrieve an instance from the database using the get method. You can also load related data using the load_paths parameter.
+Retrieve an instance from the database using the get method. You can also load related data using the load_paths parameter. (You can also specify any condition in get on the fields that are in the model.)
 
 ```
 async def get_channel():
-    channel = await Channel.get(id=1, load_paths=[Channel.channel_type])
+    channel = await Channel.get(id=1, name = "test_name", load_paths=[Channel.channel_type])
     print(channel.name)
     print(channel.channel_type.name)
 
