@@ -1,3 +1,8 @@
+# PREFACE
+
+The project is at a very early stage, but it is already usable. I should clarify that this is my first experience writing libraries and I plan to finish it for a few more months to bring it to perfection. The essence of this library is in super fast deployment of the backend on fastapi with ready-made CRUD operations and admin panel from sqlmodel. This is the very first dev version, but you can already use it for your projects. This library is not suitable for large projects where high code transparency is required, but it will do for small/medium projects where complex database operations are not required. But since fasmodel has sqlmodel (sqlalchemy + pydantic) under the box, you will still be able to use the capabilities of these libraries.
+
+
 # FastModel
 
 FastModel is a lightweight ORM extension that simplifies database interactions in your Python applications. It provides an easy-to-use interface for common database operations, leveraging the power of SQLModel (https://github.com/tiangolo/sqlmodel) and SQLAlchemy (https://www.sqlalchemy.org/) under the hood.
