@@ -51,9 +51,9 @@ class Channel(FastModel, table=True):
     url: str
     tg_id: str
     name: str
-    sub_channel_id: Optional[int] = Field(default=None, foreign_key="channels.id")
-    channel_type_id: Optional[int] = Field(default=None, foreign_key="channel_types.id")
-    channel_type: Optional[ChannelType] = Relationship()
+    sub_channel_id: int | None = Field(default=None, foreign_key="channels.id")
+    channel_type_id: int | None = Field(default=None, foreign_key="channel_types.id")
+    channel_type: "ChannelType" = Relationship()
 ```
 
 #### 3. Create Tables
