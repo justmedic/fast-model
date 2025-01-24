@@ -98,7 +98,7 @@ class HasId(SQLModel):
                 try:
                     attr = getattr(base_model, attr_name)
                 except AttributeError:
-                    message = f"Модель {cls.rus_table_name} не содержит поле {attr_name}"
+                    message = f"Модель {cls.__name__} не содержит поле {attr_name}"
                     if not suspend_error:
                         raise HTTPException(status_code=400, detail=message)
                     else:
@@ -124,7 +124,7 @@ class HasId(SQLModel):
             if filters:
                 for key in filters.keys():
                     if not hasattr(cls, key):
-                        message = f"Модель {cls.rus_table_name} не содержит поле {key}"
+                        message = f"Модель {cls.__name__} не содержит поле {key}"
                         if not suspend_error:
                             raise HTTPException(status_code=400, detail=message)
                         else:
@@ -132,7 +132,7 @@ class HasId(SQLModel):
 
                 stmt = stmt.where(*(getattr(cls, key) == value for key, value in filters.items()))
             else:
-                message = f"Не указаны фильтры для поиска {cls.rus_table_name}"
+                message = f"Не указаны фильтры для поиска {cls.__name__}"
                 if not suspend_error:
                     raise HTTPException(status_code=400, detail=message)
                 else:
@@ -143,9 +143,7 @@ class HasId(SQLModel):
             if obj:
                 return obj
             if not suspend_error:
-                raise HTTPException(
-                    status_code=404, detail=f"Не найден ресурс {cls.rus_table_name}"
-                )
+                raise HTTPException(status_code=404, detail=f"Не найден ресурс {cls.__name__}")
             return None
 
     async def delete(self) -> bool:

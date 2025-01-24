@@ -11,7 +11,10 @@ class Postffff(FastModel, table=True):
 
 
 async def start():
-    await FastModel.create_tables()
+    # await FastModel.create_tables()
+    a: Postffff = await Postffff.get(title="df", suspend_error=True)
+    print(a)
+    await a.delete()
 
 
 asyncio.run(start())
