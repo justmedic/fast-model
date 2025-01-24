@@ -71,9 +71,9 @@ class HasId(SQLModel):
             attempt = await Attempt.get(
                 id=attempt_id,
                 load_paths=[
-                    "attempt_type",
-                    ("billings", "payments"),
-                    ("billings", "billing_documents"),
+                    Attempt.attempt_type,
+                    (Attempt.billings, Billing.payments),
+                    (Attempt.billings, Billing.billing_documents),
                 ],
             )
 
@@ -85,38 +85,37 @@ class HasId(SQLModel):
         async with cls.get_session() as session:
             session: AsyncSession
 
-            def build_load_path(load_path, base_model):
-                if isinstance(load_path, str):
-                    attrs = load_path.split(".")
-                elif isinstance(load_path, (tuple, list)):
-                    attrs = list(load_path)
-                else:
-                    message = "load_path должен быть строкой или списком/кортежем строк"
-                    raise TypeError(message)
+            def build_load_path(load_path):
+                """
+                Рекурсивно строит loader для загрузки связей.
 
-                attr_name = attrs[0]
-                try:
-                    attr = getattr(base_model, attr_name)
-                except AttributeError:
-                    message = f"Модель {cls.__name__} не содержит поле {attr_name}"
-                    if not suspend_error:
-                        raise HTTPException(status_code=400, detail=message)
-                    else:
-                        raise
+                :param load_path: Атрибут модели или последовательность атрибутов
+                :return: loader для использования в опциях запроса
+                """
+                attrs = load_path if isinstance(load_path, (list, tuple)) else [load_path]
+
+                if not attrs:
+                    return None
+
+                attr = attrs[0]
+
+                # Проверка, что attr является релейшншипом
+                if not hasattr(attr, "property") or not hasattr(attr.property, "direction"):
+                    msg = "Элемент load_path должен быть релейшншипом модели"
+                    raise TypeError(msg)
 
                 is_uselist = getattr(attr.property, "uselist", False)
                 loader = selectinload(attr) if is_uselist else joinedload(attr)
-                current_model = attr.property.mapper.class_
 
                 if len(attrs) > 1:
-                    nested_loader = build_load_path(attrs[1:], current_model)
+                    nested_loader = build_load_path(attrs[1:])
                     loader = loader.options(nested_loader)
 
                 return loader
 
             options = []
             if load_paths:
-                options.extend([build_load_path(lp, cls) for lp in load_paths])
+                options.extend([build_load_path(lp) for lp in load_paths])
             stmt = select(cls)
             if options:
                 stmt = stmt.options(*options)
