@@ -274,9 +274,6 @@ async def retrieve_and_update():
     # Retrieve the channel and load related channel_type
     channel = await Channel.get(id=1, load_paths=[Channel.channel_type])
     print(f"Channel Name: {channel.name}")
-
-ChatGPT + Midjourney, [24.01.2025 16:49]
-
     print(f"Channel Type: {channel.channel_type.name}")
 
     # Update the channel name
